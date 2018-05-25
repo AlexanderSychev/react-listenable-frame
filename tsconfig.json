@@ -1,0 +1,38 @@
+{
+    "compilerOptions": {
+        "noImplicitUseStrict": true,
+        "allowSyntheticDefaultImports": true,
+        "experimentalDecorators": true,
+        "forceConsistentCasingInFileNames": true,
+        "lib": [
+            "es5",
+            "es6",
+            "dom",
+            "es2015.core",
+            "es2015.collection",
+            "es2015.generator",
+            "es2015.iterable",
+            "es2015.promise",
+            "es2015.proxy",
+            "es2015.reflect",
+            "es2015.symbol",
+            "es2015.symbol.wellknown",
+            "esnext.asynciterable"
+        ],
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noImplicitAny": true,
+        "noUnusedLocals": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "target": "ES5",
+        "strictNullChecks": true,
+        "rootDir": "src",
+        "outDir": "dist",
+        "declaration": true,
+        "importHelpers": true,
+        "jsx": "react"
+    },
+    "exclude": ["./node_modules", "dist", "./src/showCase.tsx"]
+}
