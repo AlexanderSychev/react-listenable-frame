@@ -1,1 +1,0 @@
-!function(){"use strict";function n(){window.parent.postMessage("pong","*")}function e(e){"ping"===e.data&&(console.log("ping"),setTimeout(n,1500))}window.addEventListener("load",(function(){window.addEventListener("message",e)}))}();
