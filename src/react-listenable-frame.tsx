@@ -8,6 +8,7 @@ import FrameMessagesManager from './frame-messages-manager';
  * Can be used to send messages to created frame.
  */
 export interface ReactListenableFrameSender {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (message: any, targetOrigin: string, transfer?: Transferable[]): void;
 }
 
@@ -32,13 +33,14 @@ const ReactListenableFrame: FC<ReactListenableFrameProps> = ({ onMessage, sender
 
   useEffect(() => {
     if (currentFrame && senderRef) {
+      // eslint-disable-next-line no-param-reassign
       senderRef.current = (message, targetOrigin, transfer) => {
         if (currentFrame.contentWindow) {
           currentFrame.contentWindow.postMessage(message, targetOrigin, transfer);
         }
       };
     }
-  }, [currentFrame]);
+  }, [currentFrame, senderRef]);
 
   useEffect(() => {
     let cleanUp: (() => void) | undefined;

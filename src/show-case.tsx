@@ -8,19 +8,22 @@ const ShowCase: FC = () => {
 
   const onMessage = useCallback((event: MessageEvent) => {
     if (event.data === 'pong') {
-      console.log('pong');
+      console.info('pong');
     }
   }, []);
 
   const onPingClick = useCallback(() => {
     if (sender.current) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       sender.current!('ping', '*');
     }
   }, []);
 
   return (
     <div className="app">
-      <button onClick={onPingClick}>Send "ping" message to frame</button>
+      <button type="submit" onClick={onPingClick}>
+        Send &quot;ping&quot; message to frame
+      </button>
       <ReactListenableFrame src="/frame.html" onMessage={onMessage} senderRef={sender} />
     </div>
   );

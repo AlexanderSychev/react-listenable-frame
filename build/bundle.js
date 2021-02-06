@@ -12,70 +12,60 @@ const { terser } = require('rollup-plugin-terser');
 
 const { SRC_DIR, LIB_DIR, SHOW_CASE_DIR } = require('./paths');
 
-/** Build unminified library bundle (for development) */
-async function lib() {
+/**
+ * Library bundle creation task function
+ * @param {string} format Format of bundle
+ * @param {string} file Name of bundle fine
+ * @param {boolean} sourcemap Should generate source map
+ * @returns {Promise<void>}
+ */
+async function lib(format, file, sourcemap) {
+  const plugins = [];
+  const globals = {};
+
+  if (format === 'iife') {
+    plugins.push(
+      pluginTypeScript({
+        target: 'ES5',
+        lib: ['DOM', 'ES2015'],
+      }),
+    );
+    plugins.push(terser({ format: { comments: false } }));
+    globals.react = 'React';
+  } else {
+    plugins.push(pluginTypeScript());
+  }
+
   const bundle = await rollup({
+    plugins,
     input: path.join(SRC_DIR, 'react-listenable-frame.tsx'),
     external: ['react'],
-    plugins: [pluginTypeScript()],
   });
   await bundle.write({
-    file: path.join(LIB_DIR, 'react-listenable-frame.js'),
-    format: 'umd',
-    name: 'ReactListenableFrame',
-    globals: {
-      react: 'React',
-    },
+    format,
+    globals,
+    exports: 'default',
+    name: format === 'iife' ? 'ReactListenableFrame' : undefined,
+    sourcemap: sourcemap ? 'hidden' : undefined,
+    file: path.join(LIB_DIR, file),
   });
 }
 
-/** Build minified library bundle (for production) */
-async function min() {
-  const bundle = await rollup({
-    input: path.join(SRC_DIR, 'react-listenable-frame.tsx'),
-    external: ['react'],
-    plugins: [pluginTypeScript(), terser({ format: { comments: false } })],
-  });
-  await bundle.write({
-    file: path.join(LIB_DIR, 'react-listenable-frame.min.js'),
-    format: 'umd',
-    name: 'ReactListenableFrame',
-    sourcemap: 'hidden',
-    globals: {
-      react: 'React',
-    },
-  });
+/** Build CommonJS bundle (to use by "Node.JS" or "browserify") */
+function cjs() {
+  return lib('cjs', 'react-listenable-frame.js', false);
 }
 
-/** Build minified frame script */
-async function frame() {
-  const bundle = await rollup({
-    input: path.join(SRC_DIR, 'frame.ts'),
-    plugins: [pluginTypeScript(), terser({ format: { comments: false } })],
-  });
-  await bundle.write({
-    file: path.join(SHOW_CASE_DIR, 'frame.js'),
-    sourcemap: 'hidden',
-    format: 'iife',
-  });
+/**
+ * Build ES6 Module library bundle (to use by "rollup" or "webpack" bundlers)
+ */
+function mjs() {
+  return lib('es', 'react-listenable-frame.mjs', false);
 }
 
-/** Build minified showcase script */
-async function showCase() {
-  const bundle = await rollup({
-    input: path.join(SRC_DIR, 'show-case.tsx'),
-    external: ['react', 'react-dom'],
-    plugins: [pluginTypeScript(), terser({ format: { comments: false } })],
-  });
-  await bundle.write({
-    file: path.join(SHOW_CASE_DIR, 'show-case.js'),
-    sourcemap: 'hidden',
-    format: 'iife',
-    globals: {
-      react: 'React',
-      'react-dom': 'ReactDOM',
-    },
-  });
+/** Build browser bundle (to include by `<script>` tag) */
+async function browser() {
+  return lib('iife', 'react-listenable-frame.min.js', true);
 }
 
-module.exports = parallel(lib, min, frame, showCase);
+module.exports = parallel(cjs, mjs, browser);

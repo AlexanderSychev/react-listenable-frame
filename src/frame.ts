@@ -4,7 +4,7 @@ function pong(): void {
 
 function onMessage(event: MessageEvent): void {
   if (event.data === 'ping') {
-    console.log('ping');
+    console.info('ping');
     setTimeout(pong, 1500);
   }
 }

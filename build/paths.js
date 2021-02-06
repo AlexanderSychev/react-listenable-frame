@@ -18,13 +18,9 @@ const SRC_DIR = path.join(ROOT_DIR, 'src');
 /** Compiled library code directory */
 const LIB_DIR = path.join(ROOT_DIR, 'lib');
 
-/** Show case code directory */
-const SHOW_CASE_DIR = path.join(ROOT_DIR, 'show-case');
-
 module.exports = {
   BUILD_DIR,
   ROOT_DIR,
   SRC_DIR,
   LIB_DIR,
-  SHOW_CASE_DIR,
 };

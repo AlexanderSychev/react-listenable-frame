@@ -2,7 +2,7 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist",
-    "target": "ES5",
+    "target": "ESNext",
     "baseUrl": "./src",
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -12,7 +12,6 @@
     "strict": true,
     "jsx": "react",
     "lib": [
-      "es2015",
       "DOM"
     ]
   }
