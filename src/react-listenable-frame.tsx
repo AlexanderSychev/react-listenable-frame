@@ -1,4 +1,12 @@
-import React, { useState, useEffect, DetailedHTMLProps, IframeHTMLAttributes, MutableRefObject, FC } from 'react';
+import React, {
+  useEffect,
+  useRef,
+  useCallback,
+  DetailedHTMLProps,
+  IframeHTMLAttributes,
+  MutableRefObject,
+  FC,
+} from 'react';
 
 import FrameMessagesManager from './frame-messages-manager';
 
@@ -29,32 +37,39 @@ export interface ReactListenableFrameProps
  * and posting messages to this frame
  */
 const ReactListenableFrame: FC<ReactListenableFrameProps> = ({ onMessage, senderRef, children, ...rest }) => {
-  const [currentFrame, setCurrentFrame] = useState<HTMLIFrameElement | null>(null);
+  const frameRef: MutableRefObject<HTMLIFrameElement | null> = useRef(null);
+
+  const frameFuncRef = useCallback(
+    (frame: HTMLIFrameElement) => {
+      frameRef.current = frame;
+      if (onMessage) {
+        FrameMessagesManager.getInstance().subscribe(frameRef.current, onMessage);
+      }
+
+      if (senderRef) {
+        // eslint-disable-next-line no-param-reassign
+        senderRef.current = (message, targetOrigin, transfer) => {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          if (frameRef.current!.contentWindow) {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            frameRef.current!.contentWindow.postMessage(message, targetOrigin, transfer);
+          }
+        };
+      }
+    },
+    [frameRef, senderRef, onMessage],
+  );
 
   useEffect(() => {
-    if (currentFrame && senderRef) {
-      // eslint-disable-next-line no-param-reassign
-      senderRef.current = (message, targetOrigin, transfer) => {
-        if (currentFrame.contentWindow) {
-          currentFrame.contentWindow.postMessage(message, targetOrigin, transfer);
-        }
-      };
-    }
-  }, [currentFrame, senderRef]);
-
-  useEffect(() => {
-    let cleanUp: (() => void) | undefined;
-
-    if (currentFrame && onMessage) {
-      FrameMessagesManager.getInstance().subscribe(currentFrame, onMessage);
-      cleanUp = () => FrameMessagesManager.getInstance().unsubscribe(currentFrame, onMessage);
-    }
-
-    return cleanUp;
-  }, [currentFrame, onMessage]);
+    return () => {
+      if (frameRef.current && onMessage) {
+        FrameMessagesManager.getInstance().unsubscribe(frameRef.current, onMessage);
+      }
+    };
+  }, [frameRef, onMessage]);
 
   return (
-    <iframe ref={setCurrentFrame} {...rest}>
+    <iframe ref={frameFuncRef} {...rest}>
       {children}
     </iframe>
   );
