@@ -1,5 +1,5 @@
-.prettierrc.json
-.prettierignore
 .editorconfig
-tsconfig.json
+.eslintrc
+.prettierrc.json
 gulpfile.js
+tsconfig.json
