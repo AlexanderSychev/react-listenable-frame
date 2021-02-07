@@ -55,7 +55,7 @@ const ReactListenableFrame: FC<ReactListenableFrameProps> = ({ onMessage, sender
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [onMessage],
+    [],
   );
 
   useEffect(() => {
