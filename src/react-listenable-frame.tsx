@@ -42,9 +42,6 @@ const ReactListenableFrame: FC<ReactListenableFrameProps> = ({ onMessage, sender
   const frameFuncRef = useCallback(
     (frame: HTMLIFrameElement) => {
       frameRef.current = frame;
-      if (onMessage) {
-        FrameMessagesManager.getInstance().subscribe(frameRef.current, onMessage);
-      }
 
       if (senderRef) {
         // eslint-disable-next-line no-param-reassign
@@ -57,16 +54,22 @@ const ReactListenableFrame: FC<ReactListenableFrameProps> = ({ onMessage, sender
         };
       }
     },
-    [frameRef, senderRef, onMessage],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [onMessage],
   );
 
   useEffect(() => {
-    return () => {
-      if (frameRef.current && onMessage) {
-        FrameMessagesManager.getInstance().unsubscribe(frameRef.current, onMessage);
-      }
-    };
-  }, [frameRef, onMessage]);
+    let cleanUp: (() => void) | undefined;
+
+    if (onMessage) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const currentFrame = frameRef.current!;
+      FrameMessagesManager.getInstance().subscribe(currentFrame, onMessage);
+      cleanUp = () => FrameMessagesManager.getInstance().unsubscribe(currentFrame);
+    }
+
+    return cleanUp;
+  }, [onMessage]);
 
   return (
     <iframe ref={frameFuncRef} {...rest}>

@@ -16,7 +16,7 @@
     // React is peer dependency, so off this option
     "no-use-before-define": "off",
     "@typescript-eslint/no-use-before-define": ["error", "nofunc"],
-    "no-console": ["error", { "allow": ["warn", "error", "info", "groupCollapsed", "groupEnd"] }],
+    "no-console": ["error", { "allow": ["warn", "error", "info", "debug", "groupCollapsed", "groupEnd"] }],
     "capitalized-comments": ["error", "always", { "ignorePattern": "tslint|webpackChunkName" }]
   },
   "overrides": [

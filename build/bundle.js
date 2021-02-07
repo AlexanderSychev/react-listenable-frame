@@ -44,9 +44,9 @@ async function lib(format, file, sourcemap) {
   await bundle.write({
     format,
     globals,
+    sourcemap,
     exports: 'default',
     name: format === 'iife' ? 'ReactListenableFrame' : undefined,
-    sourcemap: sourcemap ? 'hidden' : undefined,
     file: path.join(LIB_DIR, file),
   });
 }

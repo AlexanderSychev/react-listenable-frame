@@ -1,6 +1,6 @@
 {
   "name": "react-listenable-frame",
-  "version": "2.0.0",
+  "version": "1.0.0",
   "main": "dist/react-listenable-frame.js",
   "module": "dist/react-listenable-frame.mjs",
   "types": "src/react-listenable-frame.tsx",
